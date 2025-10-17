@@ -19,7 +19,6 @@ data = pd.read_feather("PulseBat.feather")
 
 #--- Data Preprocessing and Aggregation ---
 #ATTENTION! SORT HERE (BEFORE DROPPING THE OTHER COLUMNS)
-
 #Only keep Numerical Columns
 model_data = data[['Qn', 'Q', 'SOC', 'SOE'] + [f'U{i}' for i in range(1, 22)] + ['SOH']]
 
