@@ -18,8 +18,10 @@ import seaborn as sns
 data = pd.read_feather("PulseBat.feather")
 
 #--- Data Preprocessing and Aggregation ---
+#ATTENTION! SORT HERE (BEFORE DROPPING THE OTHER COLUMNS)
+
+#Only keep Numerical Columns
 model_data = data[['Qn', 'Q', 'SOC', 'SOE'] + [f'U{i}' for i in range(1, 22)] + ['SOH']]
-chatbot_data = data[['Mat', 'Pt', 'Qn', 'Q', 'SOC', 'SOE', 'SOH']]
 
 #Split the data into input (SOC, SOE, U1-U21) and output (SOH)
 X = model_data[[f"U{i}" for i in range(1, 22)] + ["SOC", "SOE"]]
