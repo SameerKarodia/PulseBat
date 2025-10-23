@@ -12,12 +12,13 @@ from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 # To add polynomial features
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import Pipeline
+#To add feature scaling
+from sklearn.preprocessing import StandardScaler
 
 
 
 #--- Visualisation ---
 import matplotlib.pyplot as plt
-import seaborn as sns
 
 #--- Import our data ---
 data = pd.read_feather("PulseBat.feather")
@@ -72,6 +73,7 @@ model = LinearRegression()
 #use polynomial factoring to extend num of inputs
 #=======================
 model = Pipeline([
+    ("scaler", StandardScaler()),
     ("poly", PolynomialFeatures(degree=2, include_bias=False)),
     ("linreg", LinearRegression())
 ])
