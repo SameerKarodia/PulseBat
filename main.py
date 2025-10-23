@@ -50,6 +50,8 @@ X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2,shuffle=
 
 #--- Training ---
 model = LinearRegression()
+
+# use polynomial factoring to extend num of inputs
 model = Pipeline([
     ("poly", PolynomialFeatures(degree=2, include_bias=False)),
     ("linreg", LinearRegression())
@@ -64,7 +66,7 @@ print("MAE:", mean_absolute_error(Y_test, Y_pred))
 
 
 
-
+#outlier removal steps
 # 1) Fit a quick baseline on TRAIN to get residuals
 # _baseline = LinearRegression().fit(X_train, Y_train)
 # _resid = Y_train - _baseline.predict(X_train)
