@@ -32,6 +32,11 @@ Cross-validation R² scores (leak check)
 Test set metrics (R², MSE, MAE)
 Interactive CLI for SOH prediction
 
+Troubleshooting
+ModuleNotFoundError → Re-activate your venv and reinstall dependencies.
+Feather read error → Ensure PulseBat.feather is in the same folder as main.py.
+Wrong interpreter → Ctrl+Shift+P → “Python: Select Interpreter” → pick .venv.
+
 What the Script Does:
 Load Data (PulseBat.feather
 Sort by SOC (ascending) to keep train/test consistent.
