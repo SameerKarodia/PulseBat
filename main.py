@@ -132,3 +132,48 @@ print("MAE per fold:", results['test_mae'])
 print("\nMean R²:", np.mean(results['test_r2']))
 print("Mean MSE:", np.mean(results['test_mse']))
 print("Mean MAE:", np.mean(results['test_mae']))
+
+
+# ====================================
+# --- USER INPUT PREDICTION SYSTEM ---
+# ====================================
+
+print("\n--- Battery Health Prediction System ---")
+
+# Ask for user-defined SOH threshold
+try:
+    threshold = float(input("Enter SOH threshold (e.g., 0.8 for 80%): "))
+except ValueError:
+    print("Invalid input. Defaulting threshold to 0.8")
+    threshold = 0.8
+
+# Ask for voltage and status inputs
+print("\nEnter battery readings below:")
+U_values = []
+for i in range(1, 22):
+    try:
+        val = float(input(f"U{i} voltage: "))
+    except ValueError:
+        val = 0.0
+    U_values.append(val)
+
+# Get SOC and SOE
+try:
+    soc = float(input("SOC value: "))
+    soe = float(input("SOE value: "))
+except ValueError:
+    soc, soe = 0.0, 0.0
+
+# Prepare input vector
+input_data = np.array(U_values + [soc, soe]).reshape(1, -1)
+
+# Predict SOH
+predicted_soh = model.predict(input_data)[0]
+print(f"\nPredicted SOH: {predicted_soh:.4f}")
+
+# Compare with threshold
+if predicted_soh >= threshold:
+    print("Battery Status: Healthy")
+else:
+    print("Battery Status: Has a Problem")
+
