@@ -1,4 +1,3 @@
-
 #IMPORTS
 #--- Data --- 
 import pandas as pd, time
@@ -100,39 +99,6 @@ print("R²:", r2_score(Y_test, Y_pred))
 print("MSE:", mean_squared_error(Y_test, Y_pred))
 print("MAE:", mean_absolute_error(Y_test, Y_pred))
 
-# CROSS-VALIDATION (replaces single train-test split)
-from sklearn.model_selection import KFold, cross_validate
-from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import make_scorer
-
-# Scale features for fair comparison
-scaler = StandardScaler()
-X_scaled = scaler.fit_transform(X)
-
-# Define model
-model = LinearRegression()
-
-# Define 5-fold cross-validation setup
-kfold = KFold(n_splits=5, shuffle=True, random_state=42)
-
-# Define metrics to evaluate
-scoring = {
-    'r2': 'r2',
-    'mse': make_scorer(mean_squared_error),
-    'mae': make_scorer(mean_absolute_error)
-}
-
-# Perform Cross-Validation
-results = cross_validate(model, X_scaled, Y, cv=kfold, scoring=scoring)
-
-# --- Evaluation (average across folds) ---
-print("R² per fold:", results['test_r2'])
-print("MSE per fold:", results['test_mse'])
-print("MAE per fold:", results['test_mae'])
-print("\nMean R²:", np.mean(results['test_r2']))
-print("Mean MSE:", np.mean(results['test_mse']))
-print("Mean MAE:", np.mean(results['test_mae']))
-
 
 # ====================================
 # --- USER INPUT PREDICTION SYSTEM ---
@@ -176,4 +142,3 @@ if predicted_soh >= threshold:
     print("Battery Status: Healthy")
 else:
     print("Battery Status: Has a Problem")
-
