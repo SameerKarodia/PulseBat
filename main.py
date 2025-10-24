@@ -12,6 +12,8 @@ from sklearn.metrics import r2_score, mean_squared_error, mean_absolute_error
 # To add polynomial features
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import Pipeline
+#To add feature scaling
+from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer  
 
 
