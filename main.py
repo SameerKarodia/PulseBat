@@ -14,8 +14,8 @@ from sklearn.preprocessing import PolynomialFeatures
 from sklearn.pipeline import Pipeline
 #To add feature scaling
 from sklearn.preprocessing import StandardScaler
-
-
+#cross validation
+from sklearn.model_selection import cross_val_score, KFold
 
 #--- Visualisation ---
 import matplotlib.pyplot as plt
@@ -24,7 +24,6 @@ import matplotlib.pyplot as plt
 data = pd.read_feather("PulseBat.feather")
 
 #--- Data Preprocessing and Aggregation ---
-#ATTENTION! SORT HERE (BEFORE DROPPING THE OTHER COLUMNS)
 data = data.sort_values(by=["SOC","SOE"],ascending=[True,False])
 
 
@@ -37,14 +36,12 @@ Y = model_data["SOH"]
 
 
 #Split the data into Train and Test sets (80/20)
-#ATTENTION! CURRENT "SORTING METHOD" IS RANDOM: "random_state=42"
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2,shuffle=False)
 
 
 
 #=======================
 # outlier removal steps
-#=======================
 # 1) Fit a quick baseline on TRAIN to get residuals
 _baseline = LinearRegression().fit(X_train, Y_train)
 _resid = Y_train - _baseline.predict(X_train)
@@ -64,6 +61,7 @@ else:
 X_train_clean = X_train[keep_mask]
 Y_train_clean = Y_train[keep_mask]
 print(f"[Outlier removal] Dropped {len(Y_train) - keep_mask.sum()} train rows, kept {keep_mask.sum()}.")
+#=======================
 
 
 
@@ -71,51 +69,32 @@ model = LinearRegression()
 
 #=======================
 #use polynomial factoring to extend num of inputs
-#=======================
 model = Pipeline([
     ("scaler", StandardScaler()),
     ("poly", PolynomialFeatures(degree=2, include_bias=False)),
     ("linreg", LinearRegression())
 ])
+#=======================
+
+# ==========================
+# Cross-Validation Check
+cv = KFold(n_splits=5, shuffle=True, random_state=42)  # ensure randomness
+cv_scores = cross_val_score(model, X, Y, cv=cv, scoring='r2')
+
+print("\nCross-Validation Results (check for leaks):")
+print("Fold R² scores:", np.round(cv_scores, 5))
+print("Mean R²:", np.mean(cv_scores))
+print("Std Dev:", np.std(cv_scores))
+# ==========================
 
 # ==========================
 # Train on cleaned and data
-# ==========================
 model.fit(X_train_clean, Y_train_clean)
+# ==========================
 
 #--- Evaluation (test vs prediction) ---
 Y_pred = model.predict(X_test)
+print("\nTesting Results (how accurate is our model):")
 print("R²:", r2_score(Y_test, Y_pred))
 print("MSE:", mean_squared_error(Y_test, Y_pred))
 print("MAE:", mean_absolute_error(Y_test, Y_pred))
-
-
-
-
-
-#outlier removal steps
-# 1) Fit a quick baseline on TRAIN to get residuals
-# _baseline = LinearRegression().fit(X_train, Y_train)
-# _resid = Y_train - _baseline.predict(X_train)
-
-# 2) Median Absolute Deviation (MAD) threshold
-# med = np.median(_resid)
-# mad = np.median(np.abs(_resid - med))
-
-# If MAD is zero , keep all points to avoid dropping everything
-# if mad == 0:
-#     keep_mask = np.ones_like(_resid, dtype=bool)
-# else:
-#     tol = 3.5 * mad  
-#     keep_mask = np.abs(_resid - med) <= tol
-
-# 3) Filter the TRAIN set only 
-# X_train_clean = X_train[keep_mask]
-# Y_train_clean = Y_train[keep_mask]
-# print(f"[Outlier removal] Dropped {len(Y_train) - keep_mask.sum()} train rows, kept {keep_mask.sum()}.")
-
-# ==========================
-# Train on cleaned data
-# ==========================
-# model = LinearRegression()
-# model.fit(X_train_clean, Y_train_clean)
