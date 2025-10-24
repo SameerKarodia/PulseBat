@@ -25,7 +25,7 @@ import matplotlib.pyplot as plt
 data = pd.read_feather("PulseBat.feather")
 
 #--- Data Preprocessing and Aggregation ---
-data = data.sort_values(by=["SOC","SOE"],ascending=[True,False])
+data = data.sort_values(by="SOC",ascending=True)
 
 
 #Only keep Numerical Columns
