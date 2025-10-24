@@ -88,7 +88,7 @@ print("Std Dev:", np.std(cv_scores))
 # ==========================
 
 # ==========================
-# Train on cleaned and data
+# Train on cleaned only data
 model.fit(X_train_clean, Y_train_clean)
 # ==========================
 
