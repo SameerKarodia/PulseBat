@@ -132,7 +132,6 @@ print("\nMean R²:", np.mean(results['test_r2']))
 print("Mean MSE:", np.mean(results['test_mse']))
 print("Mean MAE:", np.mean(results['test_mae']))
 
-
 # ====================================
 # --- USER INPUT PREDICTION SYSTEM ---
 # ====================================
@@ -146,15 +145,19 @@ except ValueError:
     print("Invalid input. Defaulting threshold to 0.8")
     threshold = 0.8
 
-# Ask for voltage and status inputs
-print("\nEnter battery readings below:")
-U_values = []
-for i in range(1, 22):
-    try:
-        val = float(input(f"U{i} voltage: "))
-    except ValueError:
-        val = 0.0
-    U_values.append(val)
+# --- User inputs for voltages in one go ---
+print("\nPaste 21 cell voltages below (separated by tabs or spaces):")
+try:
+    row_input = input().strip()
+    # split by any whitespace (tabs, spaces, etc.)
+    parts = row_input.split()
+    U_values = [float(x) for x in parts]
+    if len(U_values) != 21:
+        raise ValueError(f"Expected 21 values, got {len(U_values)}")
+except Exception as e:
+    print(f"Input error ({e}). Filling missing values with 0.0.")
+    while len(U_values) < 21:
+        U_values.append(0.0)
 
 # Get SOC and SOE
 try:
@@ -175,4 +178,3 @@ if predicted_soh >= threshold:
     print("Battery Status: Healthy")
 else:
     print("Battery Status: Has a Problem")
-
